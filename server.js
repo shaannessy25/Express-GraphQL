@@ -1,4 +1,3 @@
-
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const { buildSchema } = require("graphql");
@@ -38,63 +37,77 @@ const schema = buildSchema(`
 		getTime: Time
 		getRandom(range: Int!): Int
 		getRoll(sides: Int!, rolls: Int!): Dice
+		getCount: Int!
+		petsInRange(start: Int!, count: Int!): [Pet!]!
 	}
 
 `);
 
 const petList = [
-	{ name: 'Shadow', species: 'Dog', age: 7 },
-    { name: 'Fluffy', species: 'Dog', age: 3 },
-    { name: 'Sassy', species: 'Cat', age: 4 },
-    { name: 'Goldberg', species: 'Frog', age: 1 }
-]
+  { name: "Shadow", species: "Dog", age: 7 },
+  { name: "Fluffy", species: "Dog", age: 3 },
+  { name: "Sassy", species: "Cat", age: 4 },
+  { name: "Goldberg", species: "Frog", age: 1 },
+];
 
 //Define a resolver
 const root = {
-	allPets: () => {
-		return petList
-	},
-	
-	getPet: ({index}) => {
-		return petList[index]
-	},
+  allPets: () => {
+    return petList;
+  },
 
-	firstPet: () => {
-		return petList[0]
-	},
+  getPet: ({ index }) => {
+    return petList[index];
+  },
 
-	lastPet: () => {
-		const last = petList.length - 1
-		return petList[last]
-	},
+  firstPet: () => {
+    return petList[0];
+  },
 
-	getTime: () => {
-		return {
-			hour: new Date().getHours().toString() -  12,
-			minute: new Date().getMinutes().toString(),
-			seconds: new Date().getSeconds().toString()
-		}
-	},
+  lastPet: () => {
+    const last = petList.length - 1;
+    return petList[last];
+  },
 
-	getRandom: ({ range }) => {
-		return Math.floor(Math.random() * range)
-	},
+  getTime: () => {
+    return {
+      hour: new Date().getHours().toString() - 12,
+      minute: new Date().getMinutes().toString(),
+      seconds: new Date().getSeconds().toString(),
+    };
+  },
 
-	getRoll: ({ sides, rolls }) => {
+  getRandom: ({ range }) => {
+    return Math.floor(Math.random() * range);
+  },
 
-		let totalCount = 0
-		let diceRoll = []
-		for(let i = 0; i < rolls; i += 1){
-			number = Math.floor(Math.random() * sides)
-			diceRoll.push(number)
-			totalCount += number
-		}
-		return {
-			total: totalCount,
-			sides: sides,
-			roll: diceRoll
-		}
-	}
+  getRoll: ({ sides, rolls }) => {
+    let totalCount = 0;
+    let diceRoll = [];
+    for (let i = 0; i < rolls; i += 1) {
+      number = Math.floor(Math.random() * sides);
+      diceRoll.push(number);
+      totalCount += number;
+    }
+    return {
+      total: totalCount,
+      sides: sides,
+      roll: diceRoll,
+    };
+  },
+
+  getCount: () => {
+	  return petList.length
+  },
+
+  petsInRange: ({ start, count }) => {
+	  let totalPets = [];
+
+	  for(i = 0; i <= count; i += 1){
+		 totalPets.push(petList[i])
+	  }
+	  return totalPets
+  }
 };
 
 // Create an express app
@@ -102,16 +115,16 @@ const app = express();
 
 // Define a route for GraphQL
 app.use(
-	"/graphql",
-	graphqlHTTP({
-		schema,
-		rootValue: root,
-		graphiql: true,
-	})
+  "/graphql",
+  graphqlHTTP({
+    schema,
+    rootValue: root,
+    graphiql: true,
+  })
 );
 
 // Start this app
 const port = 4000;
 app.listen(port, () => {
-	console.log(`Running on port: ${port}`);
+  console.log(`Running on port: ${port}`);
 });
