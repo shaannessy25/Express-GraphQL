@@ -122,9 +122,11 @@ const root = {
   allSpecies: () => {
 	const getSpecies = petList.map(item => item.species);
 	const iterator = getSpecies.values()
+  let listOfSpecies = []
 	for(const value of iterator){
-		return [{name: value}]
+    listOfSpecies.push({name: value})
 	}
+  return listOfSpecies
   }
 };
 
