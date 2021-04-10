@@ -25,6 +25,11 @@ const schema = buildSchema(`
 		seconds: String!
 	}
 
+	type Dice{
+		total: Int!
+		sides: Int!
+		roll: [Int]
+	}
 	type Query {
 		allPets: [Pet!]!
 		getPet(index: Int!): Pet
@@ -32,6 +37,7 @@ const schema = buildSchema(`
 		lastPet: Pet
 		getTime: Time
 		getRandom(range: Int!): Int
+		getRoll(sides: Int!, rolls: Int!): Dice
 	}
 
 `);
@@ -72,6 +78,22 @@ const root = {
 
 	getRandom: ({ range }) => {
 		return Math.floor(Math.random() * range)
+	},
+
+	getRoll: ({ sides, rolls }) => {
+
+		let totalCount = 0
+		let diceRoll = []
+		for(let i = 0; i < rolls; i += 1){
+			number = Math.floor(Math.random() * sides)
+			diceRoll.push(number)
+			totalCount += number
+		}
+		return {
+			total: totalCount,
+			sides: sides,
+			roll: diceRoll
+		}
 	}
 };
 
