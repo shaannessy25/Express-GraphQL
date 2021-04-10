@@ -1,37 +1,42 @@
+
+
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const { buildSchema } = require("graphql");
 
 // Create a schema
 const schema = buildSchema(`
-type About {
-  message: String!
-  time: String!
-}
 
-type Meal {
-    description: String!
-    calories: Int!
-}
+	enum Species {
+		Dog
+		Cat
+		Frog
+		Fish
+	}
 
-type Query {
-  getAbout: About
-    getmeal: [Meal]
-}`);
+	type Pets {
+		name: String!
+		species: Species!
+		age: Int!
+	}
 
-// Define a resolver
+	type Query {
+		allPets: [Pets!]!
+	}
+
+`);
+
+const petList = [
+    { name: 'Fluffy', species: 'Dog', age: 3 },
+    { name: 'Sassy', species: 'Cat', age: 4 },
+    { name: 'Goldberg', species: 'Frog', age: 1 }
+]
+
+//Define a resolver
 const root = {
-	getAbout: () => {
-		return { message: "Hello World" ,
-                time: new Date().toString()
-    };
-	},
-	getmeal: () => {
-		return [
-            { description: "Pizza", calories: 500},
-            {description: "hamburger", calories: 700}
-        ];
-	},
+	allPets: () => {
+		return petList
+	}
 };
 
 // Create an express app
