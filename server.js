@@ -9,7 +9,10 @@ const schema = buildSchema(`
 		Dog
 		Cat
 		Frog
-		Fish
+	}
+
+	type nameOfSpecies {
+		name: Species!
 	}
 
 	type Pet{
@@ -39,6 +42,8 @@ const schema = buildSchema(`
 		getRoll(sides: Int!, rolls: Int!): Dice
 		getCount: Int!
 		petsInRange(start: Int!, count: Int!): [Pet!]!
+		getPetBySpecies(species: String!): [Pet!]!
+		allSpecies: [nameOfSpecies!]!
 	}
 
 `);
@@ -107,6 +112,19 @@ const root = {
 		 totalPets.push(petList[i])
 	  }
 	  return totalPets
+  },
+
+  getPetBySpecies: ({ species }) => {
+	return petList.filter(item => item.species === species)
+
+  },
+
+  allSpecies: () => {
+	const getSpecies = petList.map(item => item.species);
+	const iterator = getSpecies.values()
+	for(const value of iterator){
+		return [{name: value}]
+	}
   }
 };
 
