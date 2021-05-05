@@ -2,6 +2,7 @@ const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const { buildSchema } = require("graphql");
 
+
 // Create a schema
 const schema = buildSchema(`
 
@@ -16,10 +17,16 @@ const schema = buildSchema(`
 	}
 
 	type Pet{
-		name: String!
-		species: Species!
-		age: Int!
+    name: String!
+    species: Species!
+    age: Int!
 	}
+
+  type Mutation {
+    addPet(name: String!, species: String!, age: Int!): Pet!
+    updatePet(id: Int!, name: String, species: String, age: Int): Pet
+    deletePet(id: Int!): Pet
+  }
 
 	type Time{
 		hour: String!
@@ -44,6 +51,7 @@ const schema = buildSchema(`
 		petsInRange(start: Int!, count: Int!): [Pet!]!
 		getPetBySpecies(species: String!): [Pet!]!
 		allSpecies: [nameOfSpecies!]!
+    
 	}
 
 `);
@@ -127,6 +135,35 @@ const root = {
     listOfSpecies.push({name: value})
 	}
   return listOfSpecies
+  },
+
+  addPet: ({ name, species, age }) => {
+    const pet = { name, species, age }
+    petList.push(pet)
+    return pet
+  },
+  
+  updatePet: ({ id, name, species, age }) => {
+    const pet = petList[id]
+    if (pet === undefined){
+      return null
+    }
+
+    pet.name = name || pet.name
+    pet.species = species || pet.species
+    pet.age = age || pet.age
+
+    return pet
+  },
+
+  deletePet: ({ id }) => {
+    const pet = petList[id]
+    if (pet === undefined){
+      return null
+    }
+    petList.splice(id, 1)
+
+    return pet
   }
 };
 
